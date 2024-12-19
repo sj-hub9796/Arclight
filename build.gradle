@@ -39,7 +39,6 @@ allprojects {
         maven { url = 'https://maven.neoforged.net/releases' }
         maven { url = 'https://files.minecraftforge.net/maven/' }
         maven { url = 'https://maven.izzel.io/releases' }
-        maven { url = 'https://jitpack.io/' }
         mavenCentral()
         mavenLocal()
     }

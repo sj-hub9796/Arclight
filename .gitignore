@@ -6,3 +6,4 @@ bin/
 .idea
 *.log
 run_*/
+run
