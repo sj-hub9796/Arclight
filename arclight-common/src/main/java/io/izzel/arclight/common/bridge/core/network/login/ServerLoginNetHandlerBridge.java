@@ -15,8 +15,10 @@ public interface ServerLoginNetHandlerBridge extends ServerCommonPacketListenerB
 
     void bridge$preLogin(GameProfile authenticatedProfile) throws Exception;
 
-    default FriendlyByteBuf bridge$getDiscardedQueryAnswerData(ServerboundCustomQueryAnswerPacket payload) {
-        return new FriendlyByteBuf(((ArclightCustomQueryAnswerPayload) payload.payload()).buf());
+    default FriendlyByteBuf bridge$getDiscardedQueryAnswerData(ServerboundCustomQueryAnswerPacket packet) {
+        return packet.payload() instanceof ArclightCustomQueryAnswerPayload payload
+            ? new FriendlyByteBuf(payload.buf())
+            : null;
     }
 
     default void bridge$platform$onCustomQuery(ServerboundCustomQueryAnswerPacket payload) {}

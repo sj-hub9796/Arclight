@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class ServerLoginNetHandlerMixin_Fabric implements ServerLoginNetHandlerBridge, NetworkHandlerExtensions {
 
     @Override
-    public FriendlyByteBuf bridge$getDiscardedQueryAnswerData(ServerboundCustomQueryAnswerPacket payload) {
-        if (payload.payload() instanceof PacketByteBufLoginQueryResponse query) {
+    public FriendlyByteBuf bridge$getDiscardedQueryAnswerData(ServerboundCustomQueryAnswerPacket packet) {
+        if (packet.payload() instanceof PacketByteBufLoginQueryResponse query) {
             return new FriendlyByteBuf(Unpooled.wrappedBuffer(Unpooled.copyBoolean(true), query.data().slice()));
         }
         return null;

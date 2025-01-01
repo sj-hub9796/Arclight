@@ -964,4 +964,10 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements ServerPla
     private void arclight$exhauseCause6(double p_36379_, double p_36380_, double p_36381_, CallbackInfo ci) {
         bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.WALK);
     }
+
+    @Inject(method = "restoreFrom", at = @At("HEAD"))
+    private void arclight$forwardHandle(ServerPlayer serverPlayer, boolean bl, CallbackInfo ci) {
+        ((InternalEntityBridge) serverPlayer).internal$getBukkitEntity().setHandle((Entity) (Object) this);
+        ((EntityBridge) this).bridge$setBukkitEntity(((InternalEntityBridge) serverPlayer).internal$getBukkitEntity());
+    }
 }
