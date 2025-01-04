@@ -81,15 +81,15 @@ def installerLibsFabric = [
 ]
 
 dependencies {
-    implementation 'com.google.guava:guava:31.1-jre'
-    implementation 'org.ow2.asm:asm:9.5'
-    implementation 'org.ow2.asm:asm-tree:9.5'
+    implementation 'com.google.guava:guava:32.1.2-jre'
+    implementation 'org.ow2.asm:asm:9.7.1'
+    implementation 'org.ow2.asm:asm-tree:9.7.1'
     implementation 'net.minecraftforge:modlauncher:10.1.2'
-    implementation 'org.apache.logging.log4j:log4j-api:2.17.2'
-    implementation 'org.apache.logging.log4j:log4j-core:2.17.2'
+    implementation 'org.apache.logging.log4j:log4j-api:2.22.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.22.1'
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'org.spongepowered:mixin:0.8.5'
-    implementation 'org.apache.logging.log4j:log4j-jul:2.17.2'
+    implementation 'org.apache.logging.log4j:log4j-jul:2.22.1'
 
     forgeImplementation "net.minecraftforge:fmlloader:${minecraftVersion}-${forgeVersion}"
     forgeImplementation 'net.minecraftforge:securemodules:2.2.7'
@@ -109,7 +109,7 @@ dependencies {
         installerFabric lib
     }
 
-    gson 'com.google.code.gson:gson:2.9.0'
+    gson 'com.google.code.gson:gson:2.10.1'
     embedCommon "io.izzel:tools:$toolsVersion"
     embedCommon "io.izzel.arclight:arclight-api:$apiVersion"
     embedCommon 'commons-lang:commons-lang:2.6@jar'

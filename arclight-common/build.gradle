@@ -1,5 +1,5 @@
 plugins {
-    id "architectury-plugin" version "3.4-SNAPSHOT"
+    id 'architectury-plugin' version "${architect_plugin_version}"
     id 'java'
     id 'idea'
 }
@@ -40,9 +40,9 @@ dependencies {
     implementation 'jline:jline:2.12.1'
     implementation 'net.minecrell:terminalconsoleappender:1.2.0'
     implementation 'net.md-5:SpecialSource:1.11.3'
-    implementation 'org.apache.logging.log4j:log4j-jul:2.15.0'
+    implementation 'org.apache.logging.log4j:log4j-jul:2.22.1'
     implementation 'net.md-5:bungeecord-chat:1.20-R0.2'
-    implementation 'mysql:mysql-connector-java:8.0.28'
+    implementation 'com.mysql:mysql-connector-j:8.4.0'
     implementation 'org.yaml:snakeyaml:2.0'
     implementation "io.izzel:tools:$toolsVersion"
     implementation "io.izzel.arclight:arclight-api:$apiVersion"
