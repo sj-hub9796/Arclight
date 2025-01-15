@@ -57,12 +57,12 @@ public abstract class AnvilMenuMixin extends ItemCombinerMixin implements AnvilM
         this.sendAllDataToRemote();
     }
 
-    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 40))
+    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 40), require = 0)
     private int arclight$maximumRepairCost(int i) {
         return i - 40 + maximumRepairCost;
     }
 
-    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 39))
+    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 39), require = 0)
     private int arclight$maximumRepairCost2(int i) {
         return i - 40 + maximumRepairCost;
     }
