@@ -97,7 +97,7 @@ public abstract class ServerCommonPacketListenerImplMixin implements ServerCommo
         this.cserver = ((CraftServer) Bukkit.getServer());
     }
 
-    @ModifyConstant(method = "keepConnectionAlive", constant = @Constant(longValue = 15000L))
+    @ModifyConstant(method = "keepConnectionAlive", constant = @Constant(longValue = 15000L), require = 0)  // qyl27: No-op if conflicts.
     private long arclight$incrKeepaliveTimeout(long l) {
         return 25000L;
     }
