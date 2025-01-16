@@ -10,5 +10,8 @@ displayTest="IGNORE_SERVER_VERSION"
 credits="lona,夜幕"
 authors="IzzelAliz"
 description='''
-    Arclight bukkit layer for MinecraftForge
+    Arclight bukkit layer for NeoForge
     '''
+
+[[accessTransformers]]
+file="META-INF/accesstransformer.cfg"

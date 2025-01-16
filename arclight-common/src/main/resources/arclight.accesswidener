@@ -265,6 +265,7 @@ accessible field net/minecraft/world/entity/monster/Creeper maxSwell I
 accessible field net/minecraft/world/entity/monster/Creeper swell I
 accessible field net/minecraft/world/entity/monster/Creeper explosionRadius I
 accessible method net/minecraft/world/entity/monster/Creeper explodeCreeper ()V
+extendable method net/minecraft/world/entity/monster/Creeper explodeCreeper ()V
 # TODO field net/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess f_78271_
 accessible field net/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess levelDirectory Lnet/minecraft/world/level/storage/LevelStorageSource$LevelDirectory;
 accessible field net/minecraft/world/inventory/CraftingMenu craftSlots Lnet/minecraft/world/inventory/CraftingContainer;
