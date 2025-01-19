@@ -1,6 +1,11 @@
 package io.izzel.arclight.common.mixin.bukkit;
 
 import com.google.common.base.Preconditions;
+import io.izzel.arclight.common.bridge.core.network.common.DiscardedPayloadBridge;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.custom.DiscardedPayload;
+import net.minecraft.resources.ResourceLocation;
 import org.bukkit.craftbukkit.v.entity.CraftPlayer;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.plugin.messaging.StandardMessenger;
@@ -28,5 +33,17 @@ public abstract class CraftPlayerMixin extends CraftEntityMixin {
         if (this.channels.add(channel)) {
             this.server.getPluginManager().callEvent(new PlayerRegisterChannelEvent((CraftPlayer) (Object) this, channel));
         }
+    }
+
+    /**
+     * @author sj-hub9796
+     * @reason
+     */
+    @Overwrite
+    private void sendCustomPayload(ResourceLocation id, byte[] message) {
+        DiscardedPayload payload = new DiscardedPayload(id);
+        ((DiscardedPayloadBridge) (Object) payload).bridge$setData(Unpooled.wrappedBuffer(message));
+        ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(payload);
+        ((CraftPlayer) (Object) this).getHandle().connection.send(packet);
     }
 }

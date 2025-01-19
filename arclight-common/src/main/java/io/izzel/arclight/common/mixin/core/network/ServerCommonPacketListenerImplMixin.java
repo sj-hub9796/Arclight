@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mixin.core.network;
 
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import io.izzel.arclight.common.bridge.core.network.common.DiscardedPayloadBridge;
 import io.izzel.arclight.common.bridge.core.network.common.ServerCommonPacketListenerBridge;
 import io.izzel.arclight.common.bridge.core.server.MinecraftServerBridge;
 import io.izzel.arclight.common.mod.server.ArclightServer;
@@ -197,7 +198,7 @@ public abstract class ServerCommonPacketListenerImplMixin implements ServerCommo
 
     @Inject(method = "handleCustomPayload", at = @At("HEAD"))
     private void arclight$customPayload(ServerboundCustomPayloadPacket packet, CallbackInfo ci) {
-        var data = bridge$getDiscardedData(packet);
+        var data = ((DiscardedPayloadBridge) packet.payload()).bridge$getData();
         if (data != null) {
             var readerIndex = data.readerIndex();
             var buf = new byte[data.readableBytes()];
