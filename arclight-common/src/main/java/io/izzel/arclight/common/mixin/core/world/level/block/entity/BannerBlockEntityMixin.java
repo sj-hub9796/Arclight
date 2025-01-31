@@ -24,8 +24,8 @@ public abstract class BannerBlockEntityMixin extends BlockEntity {
         super(blockEntityType, blockPos, blockState);
     }
 
-    @Decorate(method = "method_58121", at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/entity/BannerBlockEntity;patterns:Lnet/minecraft/world/level/block/entity/BannerPatternLayers;", opcode = Opcodes.PUTFIELD))
-    private void arclight$setPatterns(BannerBlockEntity instance, BannerPatternLayers layers) {
+    @Decorate(method = "method_58121", inject = true, at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/entity/BannerBlockEntity;patterns:Lnet/minecraft/world/level/block/entity/BannerPatternLayers;", opcode = Opcodes.PUTFIELD))
+    private void arclight$setPatterns(BannerPatternLayers layers) {
         this.setPatterns(layers);
     }
 
