@@ -1,7 +1,9 @@
 package io.izzel.arclight.common.mixin.bukkit;
 
 import com.google.common.base.Function;
+import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.util.DamageSourceBridge;
+import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DistValidate;
 import net.minecraft.core.BlockPos;
@@ -11,16 +13,21 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.craftbukkit.v.block.CraftBlockState;
 import org.bukkit.craftbukkit.v.block.CraftBlockStates;
+import org.bukkit.craftbukkit.v.block.CraftSign;
 import org.bukkit.craftbukkit.v.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v.damage.CraftDamageSource;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockGrowEvent;
@@ -32,6 +39,7 @@ import org.bukkit.event.block.NotePlayEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.player.PlayerSignOpenEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -235,5 +243,33 @@ public abstract class CraftEventFactoryMixin {
             event.setCancelled(true);
             cir.setReturnValue(event);
         }
+    }
+
+    /**
+     * @author sj-hub9796
+     * @reason
+     */
+    @Overwrite
+    public static boolean callPlayerSignOpenEvent(net.minecraft.world.entity.player.Player player, SignBlockEntity tileEntitySign, boolean front, PlayerSignOpenEvent.Cause cause) {
+        Block block = CraftBlock.at(tileEntitySign.getLevel(), tileEntitySign.getBlockPos());
+        Sign sign;
+        if (CraftBlockStates.getBlockState(block) instanceof Sign sign1) {
+            sign = sign1;
+        } else {
+            sign = new CraftSign<>(((WorldBridge) tileEntitySign.getLevel()).bridge$getWorld(), tileEntitySign);
+        }
+        Side side = front ? Side.FRONT : Side.BACK;
+        return callPlayerSignOpenEvent(((ServerPlayerEntityBridge) player).bridge$getBukkitEntity(), sign, side, cause);
+    }
+
+    /**
+     * @author sj-hub9796
+     * @reason
+     */
+    @Overwrite
+    public static boolean callPlayerSignOpenEvent(Player player, Sign sign, Side side, PlayerSignOpenEvent.Cause cause) {
+        PlayerSignOpenEvent event = new PlayerSignOpenEvent(player, sign, side, cause);
+        Bukkit.getPluginManager().callEvent(event);
+        return !event.isCancelled();
     }
 }
