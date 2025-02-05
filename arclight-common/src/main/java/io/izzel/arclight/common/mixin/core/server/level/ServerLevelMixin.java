@@ -114,7 +114,7 @@ public abstract class ServerLevelMixin extends LevelMixin implements ServerWorld
     // @formatter:on
 
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    public PrimaryLevelData K; // TODO f_8549_ check on update
+    public PrimaryLevelData K; // Stupid CraftBukkit patch.
     public LevelStorageSource.LevelStorageAccess convertable;
     public UUID uuid;
     public ResourceKey<LevelStem> typeKey;
@@ -159,14 +159,16 @@ public abstract class ServerLevelMixin extends LevelMixin implements ServerWorld
                 this.typeKey = ResourceKey.create(Registries.LEVEL_STEM, dimension.location());
             }
         }
-        if (worldInfo instanceof PrimaryLevelData) {
-            this.K = (PrimaryLevelData) worldInfo;
-        } else if (worldInfo instanceof DerivedLevelData) {
+        if (worldInfo instanceof PrimaryLevelData data) {
+            this.K = data;
+        } else {
             // damn spigot again
-            this.K = DelegateWorldInfo.wrap(((DerivedLevelData) worldInfo));
-            ((DerivedWorldInfoBridge) worldInfo).bridge$setDimType(this.getTypeKey());
-            if (ArclightConfig.spec().getCompat().isSymlinkWorld()) {
-                WorldSymlink.create((DerivedLevelData) worldInfo, levelSave.getDimensionPath(this.dimension()).toFile());
+            this.K = DelegateWorldInfo.wrap(worldInfo);
+            if (worldInfo instanceof DerivedLevelData data) {
+                ((DerivedWorldInfoBridge) worldInfo).bridge$setDimType(this.getTypeKey());
+                if (ArclightConfig.spec().getCompat().isSymlinkWorld()) {
+                    WorldSymlink.create(data, levelSave.getDimensionPath(this.dimension()).toFile());
+                }
             }
         }
         this.spigotConfig = new SpigotWorldConfig(worldInfo.getLevelName());
@@ -245,8 +247,8 @@ public abstract class ServerLevelMixin extends LevelMixin implements ServerWorld
             cause = arclight$cause;
             arclight$cause = null;
         }
-        if (DistValidate.isValid((LevelAccessor) this)) {
-            LightningStrikeEvent lightning = CraftEventFactory.callLightningStrikeEvent((LightningStrike) ((EntityBridge) entity).bridge$getBukkitEntity(), cause);
+        if (DistValidate.isValid(this)) {
+            LightningStrikeEvent lightning = CraftEventFactory.callLightningStrikeEvent((LightningStrike) entity.bridge$getBukkitEntity(), cause);
             if (lightning.isCancelled()) {
                 return false;
             }
@@ -261,7 +263,7 @@ public abstract class ServerLevelMixin extends LevelMixin implements ServerWorld
 
     @Inject(method = "save", at = @At(value = "JUMP", ordinal = 0, opcode = Opcodes.IFNULL))
     private void arclight$worldSaveEvent(ProgressListener progress, boolean flush, boolean skipSave, CallbackInfo ci) {
-        if (DistValidate.isValid((LevelAccessor) this)) {
+        if (DistValidate.isValid(this)) {
             Bukkit.getPluginManager().callEvent(new WorldSaveEvent(bridge$getWorld()));
         }
     }
@@ -323,7 +325,7 @@ public abstract class ServerLevelMixin extends LevelMixin implements ServerWorld
     private void arclight$addEntityEvent(Entity entityIn, CallbackInfoReturnable<Boolean> cir) {
         CreatureSpawnEvent.SpawnReason reason = arclight$reason == null ? CreatureSpawnEvent.SpawnReason.DEFAULT : arclight$reason;
         arclight$reason = null;
-        if (DistValidate.isValid((LevelAccessor) this) && !CraftEventFactory.doEntityAddEventCalling((ServerLevel) (Object) this, entityIn, reason)) {
+        if (DistValidate.isValid(this) && !CraftEventFactory.doEntityAddEventCalling((ServerLevel) (Object) this, entityIn, reason)) {
             cir.setReturnValue(false);
         }
     }
