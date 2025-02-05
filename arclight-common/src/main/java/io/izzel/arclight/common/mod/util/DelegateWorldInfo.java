@@ -7,15 +7,10 @@ import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.LevelHeightAccessor;
-import net.minecraft.world.level.LevelSettings;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.levelgen.WorldOptions;
-import net.minecraft.world.level.storage.DerivedLevelData;
-import net.minecraft.world.level.storage.PrimaryLevelData;
-import net.minecraft.world.level.storage.ServerLevelData;
+import net.minecraft.world.level.storage.*;
 import net.minecraft.world.level.timers.TimerQueue;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,235 +19,263 @@ import java.util.UUID;
 @SuppressWarnings("all")
 public class DelegateWorldInfo extends PrimaryLevelData {
 
-    private final DerivedLevelData derivedWorldInfo;
+    private final ServerLevelData serverLevelData;
 
-    public DelegateWorldInfo(LevelSettings p_251081_, WorldOptions p_251666_, SpecialWorldProperty p_252268_, Lifecycle p_251714_, DerivedLevelData derivedLevelData) {
-        super(p_251081_, p_251666_, p_252268_, p_251714_);
-        this.derivedWorldInfo = derivedLevelData;
+    public DelegateWorldInfo(LevelSettings levelSettings, WorldOptions worldOptions,
+                             SpecialWorldProperty specialWorldProperty, Lifecycle lifecycle,
+                             ServerLevelData serverLevelData) {
+        super(levelSettings, worldOptions, specialWorldProperty, lifecycle);
+        this.serverLevelData = serverLevelData;
     }
 
     @Override
     public float getSpawnAngle() {
-        return derivedWorldInfo.getSpawnAngle();
+        return serverLevelData.getSpawnAngle();
     }
 
     @Override
     public long getGameTime() {
-        return derivedWorldInfo.getGameTime();
+        return serverLevelData.getGameTime();
     }
 
     @Override
     public long getDayTime() {
-        return derivedWorldInfo.getDayTime();
+        return serverLevelData.getDayTime();
     }
 
     @Override
     public String getLevelName() {
-        return derivedWorldInfo.getLevelName();
+        return serverLevelData.getLevelName();
     }
 
     @Override
     public int getClearWeatherTime() {
-        return derivedWorldInfo.getClearWeatherTime();
+        return serverLevelData.getClearWeatherTime();
     }
 
     @Override
     public void setClearWeatherTime(int time) {
-        derivedWorldInfo.setClearWeatherTime(time);
+        serverLevelData.setClearWeatherTime(time);
     }
 
     @Override
     public boolean isThundering() {
-        return derivedWorldInfo.isThundering();
+        return serverLevelData.isThundering();
     }
 
     @Override
     public int getThunderTime() {
-        return derivedWorldInfo.getThunderTime();
+        return serverLevelData.getThunderTime();
     }
 
     @Override
     public boolean isRaining() {
-        return derivedWorldInfo.isRaining();
+        return serverLevelData.isRaining();
     }
 
     @Override
     public int getRainTime() {
-        return derivedWorldInfo.getRainTime();
+        return serverLevelData.getRainTime();
     }
 
     @Override
     public GameType getGameType() {
-        return derivedWorldInfo.getGameType();
+        return serverLevelData.getGameType();
     }
 
     @Override
     public void setGameTime(long time) {
-        derivedWorldInfo.setGameTime(time);
+        serverLevelData.setGameTime(time);
     }
 
     @Override
     public void setDayTime(long time) {
-        derivedWorldInfo.setDayTime(time);
+        serverLevelData.setDayTime(time);
     }
 
     @Override
     public void setSpawn(BlockPos spawnPoint, float angle) {
-        derivedWorldInfo.setSpawn(spawnPoint, angle);
+        serverLevelData.setSpawn(spawnPoint, angle);
     }
 
     @Override
     public void setThundering(boolean thunderingIn) {
-        derivedWorldInfo.setThundering(thunderingIn);
+        serverLevelData.setThundering(thunderingIn);
     }
 
     @Override
     public void setThunderTime(int time) {
-        derivedWorldInfo.setThunderTime(time);
+        serverLevelData.setThunderTime(time);
     }
 
     @Override
     public void setRaining(boolean isRaining) {
-        derivedWorldInfo.setRaining(isRaining);
+        serverLevelData.setRaining(isRaining);
     }
 
     @Override
     public void setRainTime(int time) {
-        derivedWorldInfo.setRainTime(time);
+        serverLevelData.setRainTime(time);
     }
 
     @Override
     public void setGameType(GameType type) {
-        derivedWorldInfo.setGameType(type);
+        serverLevelData.setGameType(type);
     }
 
     @Override
     public boolean isHardcore() {
-        return derivedWorldInfo.isHardcore();
+        return serverLevelData.isHardcore();
     }
 
     @Override
     public boolean isAllowCommands() {
-        return derivedWorldInfo.isAllowCommands();
+        return serverLevelData.isAllowCommands();
     }
 
     @Override
     public boolean isInitialized() {
-        return derivedWorldInfo.isInitialized();
+        return serverLevelData.isInitialized();
     }
 
     @Override
     public void setInitialized(boolean initializedIn) {
-        derivedWorldInfo.setInitialized(initializedIn);
+        serverLevelData.setInitialized(initializedIn);
     }
 
     @Override
     public GameRules getGameRules() {
-        return derivedWorldInfo.getGameRules();
+        return serverLevelData.getGameRules();
     }
 
     @Override
     public WorldBorder.Settings getWorldBorder() {
-        return derivedWorldInfo.getWorldBorder();
+        return serverLevelData.getWorldBorder();
     }
 
     @Override
     public void setWorldBorder(WorldBorder.Settings serializer) {
-        derivedWorldInfo.setWorldBorder(serializer);
+        serverLevelData.setWorldBorder(serializer);
     }
 
     @Override
     public Difficulty getDifficulty() {
-        return derivedWorldInfo.getDifficulty();
+        return serverLevelData.getDifficulty();
     }
 
     @Override
     public boolean isDifficultyLocked() {
-        return derivedWorldInfo.isDifficultyLocked();
+        return serverLevelData.isDifficultyLocked();
     }
 
     @Override
     public TimerQueue<MinecraftServer> getScheduledEvents() {
-        return derivedWorldInfo.getScheduledEvents();
+        return serverLevelData.getScheduledEvents();
     }
 
     @Override
     public int getWanderingTraderSpawnDelay() {
-        return derivedWorldInfo.getWanderingTraderSpawnDelay();
+        return serverLevelData.getWanderingTraderSpawnDelay();
     }
 
     @Override
     public void setWanderingTraderSpawnDelay(int delay) {
-        derivedWorldInfo.setWanderingTraderSpawnDelay(delay);
+        serverLevelData.setWanderingTraderSpawnDelay(delay);
     }
 
     @Override
     public int getWanderingTraderSpawnChance() {
-        return derivedWorldInfo.getWanderingTraderSpawnChance();
+        return serverLevelData.getWanderingTraderSpawnChance();
     }
 
     @Override
     public void setWanderingTraderSpawnChance(int chance) {
-        derivedWorldInfo.setWanderingTraderSpawnChance(chance);
+        serverLevelData.setWanderingTraderSpawnChance(chance);
     }
 
     @Nullable
     @Override
     public UUID getWanderingTraderId() {
-        return derivedWorldInfo.getWanderingTraderId();
+        return serverLevelData.getWanderingTraderId();
     }
 
     @Override
     public void setWanderingTraderId(UUID id) {
-        derivedWorldInfo.setWanderingTraderId(id);
+        serverLevelData.setWanderingTraderId(id);
     }
 
     @Override
     public void fillCrashReportCategory(CrashReportCategory crashReportCategory, LevelHeightAccessor levelHeightAccessor) {
-        derivedWorldInfo.fillCrashReportCategory(crashReportCategory, levelHeightAccessor);
+        serverLevelData.fillCrashReportCategory(crashReportCategory, levelHeightAccessor);
     }
 
     @Override
     public BlockPos getSpawnPos() {
-        return derivedWorldInfo.getSpawnPos();
+        return serverLevelData.getSpawnPos();
     }
 
-    public static DelegateWorldInfo wrap(DerivedLevelData worldInfo) {
-        return new DelegateWorldInfo(worldSettings(worldInfo), generatorSettings(worldInfo), specialWorldProperty(worldInfo), lifecycle(worldInfo), worldInfo);
+
+    public static DelegateWorldInfo wrap(ServerLevelData data) {
+        return new DelegateWorldInfo(worldSettings(data), generatorSettings(data), specialWorldProperty(data), lifecycle(data), data);
     }
 
-    private static LevelSettings worldSettings(ServerLevelData worldInfo) {
-        if (worldInfo instanceof PrimaryLevelData) {
-            return ((WorldInfoBridge) worldInfo).bridge$getWorldSettings();
-        } else {
-            return worldSettings(((DerivedWorldInfoBridge) worldInfo).bridge$getDelegate());
+    private static LevelSettings worldSettings(ServerLevelData data) {
+        data = resolveDelegate(data);
+
+        if (data instanceof WorldInfoBridge bridged) {
+            return bridged.bridge$getWorldSettings();
         }
+
+        if (data instanceof WorldData p) {
+            return p.getLevelSettings();
+        }
+
+        return new LevelSettings(data.getLevelName(), data.getGameType(), data.isHardcore(), data.getDifficulty(),
+                data.isAllowCommands(), data.getGameRules(), WorldDataConfiguration.DEFAULT);
     }
 
-    private static WorldOptions generatorSettings(ServerLevelData worldInfo) {
-        if (worldInfo instanceof PrimaryLevelData) {
-            return ((PrimaryLevelData) worldInfo).worldGenOptions();
-        } else {
-            return generatorSettings(((DerivedWorldInfoBridge) worldInfo).bridge$getDelegate());
+    private static WorldOptions generatorSettings(ServerLevelData data) {
+        data = resolveDelegate(data);
+
+        if (data instanceof WorldData p) {
+            return p.worldGenOptions();
         }
+
+        return WorldOptions.defaultWithRandomSeed();
     }
 
-    private static SpecialWorldProperty specialWorldProperty(ServerLevelData serverLevelData) {
-        if (serverLevelData instanceof PrimaryLevelData) {
-            return ((PrimaryLevelData) serverLevelData).isFlatWorld() ?
-                SpecialWorldProperty.FLAT : (
-                ((PrimaryLevelData) serverLevelData).isDebugWorld() ? SpecialWorldProperty.DEBUG : SpecialWorldProperty.NONE
-            );
-        } else {
-            return specialWorldProperty(((DerivedWorldInfoBridge) serverLevelData).bridge$getDelegate());
+    private static SpecialWorldProperty specialWorldProperty(ServerLevelData data) {
+        data = resolveDelegate(data);
+
+        if (data instanceof WorldData d) {
+            return (d.isFlatWorld() ?
+                    SpecialWorldProperty.FLAT :
+                    (d.isDebugWorld() ?
+                            SpecialWorldProperty.DEBUG :
+                            SpecialWorldProperty.NONE));
         }
+
+        return SpecialWorldProperty.NONE;
     }
 
-    private static Lifecycle lifecycle(ServerLevelData worldInfo) {
-        if (worldInfo instanceof PrimaryLevelData) {
-            return ((WorldInfoBridge) worldInfo).bridge$getLifecycle();
-        } else {
-            return lifecycle(((DerivedWorldInfoBridge) worldInfo).bridge$getDelegate());
+    private static Lifecycle lifecycle(ServerLevelData data) {
+        data = resolveDelegate(data);
+        if (data instanceof WorldInfoBridge bridged) {
+            return bridged.bridge$getLifecycle();
         }
+
+        if (data instanceof WorldData p) {
+            return p.worldGenSettingsLifecycle();
+        }
+
+        return Lifecycle.stable();
+    }
+
+    private static ServerLevelData resolveDelegate(ServerLevelData data) {
+        if (data instanceof DerivedWorldInfoBridge bridged) {
+            return resolveDelegate(bridged.bridge$getDelegate());
+        }
+
+        return data;
     }
 }
