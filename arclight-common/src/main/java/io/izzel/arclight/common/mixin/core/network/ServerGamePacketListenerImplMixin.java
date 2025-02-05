@@ -9,6 +9,8 @@ import io.izzel.arclight.common.bridge.core.network.play.TimestampedPacket;
 import io.izzel.arclight.common.bridge.core.server.MinecraftServerBridge;
 import io.izzel.arclight.common.bridge.core.server.management.PlayerInteractionManagerBridge;
 import io.izzel.arclight.common.bridge.core.server.management.PlayerListBridge;
+import io.izzel.arclight.common.helper.bukkit.craftbukkit.event.HCraftEventFactory;
+import io.izzel.arclight.common.mixin.bukkit.CraftEventFactoryMixin;
 import io.izzel.arclight.common.mod.ArclightConstants;
 import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.common.mod.server.RunnableInPlace;
@@ -1191,6 +1193,34 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
         final Entity entity = packet.getTarget(world);
         if (entity == player && !player.isSpectator()) {
             bridge$disconnect("Cannot interact with self!");
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "handleInteract", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/server/level/ServerPlayer;setShiftKeyDown(Z)V"))
+    private void arclight$playerUseUnknownEntityEvent(ServerboundInteractPacket packet, CallbackInfo ci) {
+        final ServerLevel world = this.player.serverLevel();
+        final Entity entity = packet.getTarget(world);
+
+        if (entity == null) {
+            packet.dispatch(new ServerboundInteractPacket.Handler() {
+
+                @Override
+                public void onInteraction(InteractionHand interactionHand) {
+                    HCraftEventFactory.callPlayerUseUnknownEntityEvent(player, packet, interactionHand, null);
+                }
+
+                @Override
+                public void onInteraction(InteractionHand interactionHand, Vec3 vec3) {
+                    HCraftEventFactory.callPlayerUseUnknownEntityEvent(player, packet, interactionHand, vec3);
+                }
+
+                @Override
+                public void onAttack() {
+                    HCraftEventFactory.callPlayerUseUnknownEntityEvent(player, packet, InteractionHand.MAIN_HAND, null);
+                }
+
+            });
             ci.cancel();
         }
     }

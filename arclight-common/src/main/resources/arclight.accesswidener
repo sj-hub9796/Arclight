@@ -7,6 +7,8 @@ mutable field net/minecraft/world/level/block/entity/trialspawner/TrialSpawner r
 mutable field net/minecraft/world/level/block/entity/trialspawner/TrialSpawner ominousConfig Lnet/minecraft/world/level/block/entity/trialspawner/TrialSpawnerConfig;
 accessible class net/minecraft/world/level/biome/Biome$ClimateSettings
 accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
+accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$Action
+accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$ActionType
 #accessible field net/minecraft/world/level/biome/Biome climateSettings Lnet/minecraft/world/level/biome/Biome$ClimateSettings;
 accessible class net/minecraft/world/entity/monster/Guardian$GuardianAttackGoal
 accessible class net/minecraft/world/entity/Interaction$PlayerAction

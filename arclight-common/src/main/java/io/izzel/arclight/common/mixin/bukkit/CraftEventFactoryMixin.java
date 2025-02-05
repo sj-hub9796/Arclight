@@ -4,9 +4,11 @@ import com.google.common.base.Function;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.util.DamageSourceBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
+import io.izzel.arclight.common.helper.bukkit.craftbukkit.event.HCraftEventFactory;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DistValidate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -272,4 +274,10 @@ public abstract class CraftEventFactoryMixin {
         Bukkit.getPluginManager().callEvent(event);
         return !event.isCancelled();
     }
+
+    // Paper start - PlayerUseUnknownEntityEvent
+    private static void arclight$callPlayerUseUnknownEntityEvent(net.minecraft.world.entity.player.Player player, net.minecraft.network.protocol.game.ServerboundInteractPacket packet, InteractionHand hand, @Nullable net.minecraft.world.phys.Vec3 vector) {
+        HCraftEventFactory.callPlayerUseUnknownEntityEvent(player, packet, hand, vector);
+    }
+    // Paper end - PlayerUseUnknownEntityEvent
 }
