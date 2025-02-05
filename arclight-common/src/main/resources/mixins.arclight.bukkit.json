@@ -43,6 +43,7 @@
     "PluginClassLoaderMixin",
     "PotionTypeMixin",
     "Registry_SimpleRegistryMixin",
+    "ServerMixin",
     "StandardMessengerMixin",
     "WatchdogThreadMixin",
     "inventory.CraftItemStackMixin",
