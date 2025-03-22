@@ -14,7 +14,7 @@
     "requireAnnotations": false
   },
   "mixinPriority": 555,
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "server.Main_ServerShutdownThreadMixin_Vanilla",
     "server.dedicated.DedicatedServer_ServerInputThreadMixin_Vanilla",
@@ -24,7 +24,9 @@
     "world.entity.EntityMixin_Vanilla",
     "world.entity.LivingEntityMixin_Vanilla",
     "world.entity.animal.MushroomCowMixin_Vanilla",
+    "world.entity.animal.SheepMixin_Vanilla",
     "world.entity.animal.SnowGolemMixin_Vanilla",
+    "world.entity.animal.WolfMixin_Vanilla",
     "world.entity.animal.frog.TadpoleMixin_Vanilla",
     "world.entity.monster.BoggedMixin_Vanilla",
     "world.entity.monster.ZombieMixin_Vanilla",

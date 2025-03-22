@@ -13,7 +13,7 @@
     "requireAnnotations": false
   },
   "mixinPriority": 555,
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "bukkit.CraftHumanEntityMixin_NeoForge",
     "bukkit.CraftServerMixin_NeoForge",
@@ -39,6 +39,8 @@
     "core.world.entity.MobMixin_NeoForge",
     "core.world.entity.ai.behavior.HarvestFarmlandMixin_NeoForge",
     "core.world.entity.animal.MushroomCowMixin_NeoForge",
+    "core.world.entity.animal.SheepMixin_NeoForge",
+    "core.world.entity.animal.WolfMixin_NeoForge",
     "core.world.entity.animal.frog.TadpoleMixin_NeoForge",
     "core.world.entity.item.ItemEntityMixin_NeoForge",
     "core.world.entity.monster.ZombieMixin_NeoForge",
@@ -65,11 +67,11 @@
     "core.world.level.block.FireBlockMixin_NeoForge",
     "core.world.level.block.TntBlockMixin_NeoForge",
     "core.world.level.block.entity.AbstractFurnaceBlockEntityMixin_NeoForge",
-    "core.world.level.block.entity.BrewingStandBlockEntityMixin_NeoForge",
     "core.world.level.block.state.BlockBehaviourMixin_Forge",
     "core.world.level.levelgen.structure.templatesystem.StructureTemplateMixin_NeoForge",
     "core.world.level.storage.loot.LootContextMixin_NeoForge",
     "neoforge.CommonHooksMixin",
+    "neoforge.EventHooksMixin",
     "neoforge.PacketDistributorMixin",
     "neoforge.PermissionAPIMixin",
     "optimization.general.activationrange.entity.ItemEntityMixin_ActivationRange_NeoForge"

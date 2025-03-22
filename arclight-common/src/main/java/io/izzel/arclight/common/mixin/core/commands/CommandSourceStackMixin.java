@@ -2,10 +2,11 @@ package io.izzel.arclight.common.mixin.core.commands;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.tree.CommandNode;
+import io.izzel.arclight.common.bridge.core.command.CommandSourceStackBridge;
 import io.izzel.arclight.common.bridge.core.command.CommandSourceBridge;
-import io.izzel.arclight.common.bridge.core.command.ICommandSourceBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.mod.compat.CommandNodeHooks;
+import io.izzel.arclight.common.mod.server.command.ArclightDummyCommandSender;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerLevel;
@@ -22,9 +23,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import java.util.Objects;
 
 @Mixin(CommandSourceStack.class)
-public abstract class CommandSourceStackMixin implements CommandSourceBridge {
+public abstract class CommandSourceStackMixin implements CommandSourceStackBridge {
 
     // @formatter:off
     @Shadow @Final @Mutable public CommandSource source;
@@ -78,7 +80,10 @@ public abstract class CommandSourceStackMixin implements CommandSourceBridge {
     }
 
     public CommandSender getBukkitSender() {
-        return ((ICommandSourceBridge) this.source).bridge$getBukkitSender((CommandSourceStack) (Object) this);
+        var thus = (CommandSourceStack) (Object) this;
+        var sender = ((CommandSourceBridge) this.source).bridge$getBukkitSender(thus);
+        // It means that this is a custom CommandSource
+        return Objects.requireNonNullElseGet(sender, () -> new ArclightDummyCommandSender(thus));
     }
 
     @Override

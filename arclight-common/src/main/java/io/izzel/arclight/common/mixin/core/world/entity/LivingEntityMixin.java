@@ -7,6 +7,7 @@ import com.mojang.datafixers.util.Either;
 import io.izzel.arclight.common.bridge.core.entity.LivingEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.network.play.ServerPlayNetHandlerBridge;
+import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.common.mod.util.EntityDamageResult;
 import io.izzel.arclight.common.util.IteratorUtil;
 import io.izzel.arclight.i18n.ArclightConfig;
@@ -81,6 +82,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -245,6 +247,10 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         return getEatingSound(itemstack);
     }
 
+    // Preserve NMS invocation for Citizens2
+    @Invoker("detectEquipmentUpdates")
+    public abstract void detectEquipmentUpdatesPublic();
+
     /**
      * @author IzzelAliz
      * @reason
@@ -384,6 +390,24 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         if (event.isCancelled()) {
             cir.setReturnValue(null);
         }
+    }
+
+    // Fix entity removing itself when effect is removed causes looping remove
+    @Unique private boolean removing = false;
+
+    @Inject(method = "remove", cancellable = true, at = @At("HEAD"))
+    private void arclight$beginOnDeathMobEffects(Entity.RemovalReason removalReason, CallbackInfo ci) {
+        if (removing) {
+            ci.cancel();
+            ArclightServer.LOGGER.warn("remove() is called recursively, skipping");
+            return;
+        }
+        removing = true;
+    }
+
+    @Inject(method = "remove", at = @At("TAIL"))
+    private void arclight$endOnDeathMobEffects(CallbackInfo ci) {
+        removing = false;
     }
 
     @Inject(method = "triggerOnDeathMobEffects", at = @At(value = "INVOKE", remap = false, target = "Ljava/util/Map;clear()V"))
