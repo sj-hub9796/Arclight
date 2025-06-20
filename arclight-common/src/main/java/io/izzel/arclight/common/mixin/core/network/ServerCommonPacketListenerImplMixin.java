@@ -3,6 +3,8 @@ package io.izzel.arclight.common.mixin.core.network;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.network.common.ServerCommonPacketListenerBridge;
 import io.izzel.arclight.common.bridge.core.server.MinecraftServerBridge;
+import io.izzel.arclight.common.mod.mixins.annotation.CreateConstructor;
+import io.izzel.arclight.common.mod.mixins.annotation.ShadowConstructor;
 import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.mixin.Decorate;
@@ -69,6 +71,17 @@ public abstract class ServerCommonPacketListenerImplMixin implements ServerCommo
 
     public CraftPlayer getCraftPlayer() {
         return (this.player == null) ? null : ((ServerPlayerEntityBridge) this.player).bridge$getBukkitEntity();
+    }
+
+    @ShadowConstructor
+    public abstract void arclight$this(MinecraftServer server, Connection connection, CommonListenerCookie cookie);
+
+    @CreateConstructor
+    public void arclight$constructor(MinecraftServer server, Connection connection, CommonListenerCookie cookie, ServerPlayer player) {
+        arclight$this(server, connection, cookie);
+        this.player = player;
+        ((ServerPlayerEntityBridge) player).bridge$setTransferCookieConnection(this);
+        this.cserver = (CraftServer) Bukkit.getServer(); // TODO: Use MinecraftServerBridge.bridge$getServer()
     }
 
     @Override
@@ -192,58 +205,9 @@ public abstract class ServerCommonPacketListenerImplMixin implements ServerCommo
         }
     }
 
-    private static final ResourceLocation CUSTOM_REGISTER = ResourceLocation.withDefaultNamespace("register");
-    private static final ResourceLocation CUSTOM_UNREGISTER = ResourceLocation.withDefaultNamespace("unregister");
-
-    @Inject(method = "handleCustomPayload", at = @At("HEAD"))
-    private void arclight$customPayload(ServerboundCustomPayloadPacket packet, CallbackInfo ci) {
-        var data = bridge$getDiscardedData(packet);
-        if (data != null) {
-            var readerIndex = data.readerIndex();
-            var buf = new byte[data.readableBytes()];
-            data.readBytes(buf);
-            data.readerIndex(readerIndex);
-            ArclightServer.getMinecraftServer().executeIfPossible(() -> {
-                if (((MinecraftServerBridge) ArclightServer.getMinecraftServer()).bridge$hasStopped() || bridge$processedDisconnect()) {
-                    return;
-                }
-                if (this.connection.isConnected()) {
-                    if (packet.payload().type().id().equals(CUSTOM_REGISTER)) {
-                        try {
-                            String channels = new String(buf, StandardCharsets.UTF_8);
-                            for (String channel : channels.split("\0")) {
-                                if (!StringUtil.isNullOrEmpty(channel)) {
-                                    this.bridge$getCraftPlayer().addChannel(channel);
-                                }
-                            }
-                        } catch (Exception ex) {
-                            LOGGER.error("Couldn't register custom payload", ex);
-                            this.bridge$disconnect("Invalid payload REGISTER!");
-                        }
-                    } else if (packet.payload().type().id().equals(CUSTOM_UNREGISTER)) {
-                        try {
-                            final String channels = new String(buf, StandardCharsets.UTF_8);
-                            for (String channel : channels.split("\0")) {
-                                if (!StringUtil.isNullOrEmpty(channel)) {
-                                    this.bridge$getCraftPlayer().removeChannel(channel);
-                                }
-                            }
-                        } catch (Exception ex) {
-                            LOGGER.error("Couldn't unregister custom payload", ex);
-                            this.bridge$disconnect("Invalid payload UNREGISTER!");
-                        }
-                    } else {
-                        try {
-                            this.bridge$getCraftServer().getMessenger().dispatchIncomingMessage(((ServerPlayerEntityBridge) this.bridge$getPlayer()).bridge$getBukkitEntity(), packet.payload().type().id().toString(), buf);
-                        } catch (Exception ex) {
-                            LOGGER.error("Couldn't dispatch custom payload", ex);
-                            this.bridge$disconnect("Invalid custom payload!");
-                        }
-                    }
-                }
-            });
-        }
-    }
+    // Plugin channel impl moved to PSI
+    // @Inject(method = "handleCustomPayload", at = @At("HEAD"))
+    // private void arclight$customPayload(ServerboundCustomPayloadPacket packet, CallbackInfo ci)
 
     @Override
     public boolean isTransferred() {

@@ -1587,7 +1587,12 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
         if (this.player.gameMode.isCreative()) {
             final boolean flag = packetplayinsetcreativeslot.slotNum() < 0;
             ItemStack itemstack = packetplayinsetcreativeslot.itemStack();
-            CustomData customdata = (CustomData) itemstack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY);
+
+            if (!itemstack.isItemEnabled(this.player.level().enabledFeatures())) {
+                return;
+            }
+
+            CustomData customdata = itemstack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY);
 
             if (customdata.contains("x") && customdata.contains("y") && customdata.contains("z") && this.player.bridge$getBukkitEntity().hasPermission("minecraft.nbt.copy")) {
                 BlockPos blockpos = BlockEntity.getPosFromTag(customdata.getUnsafe());
@@ -1599,7 +1604,7 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
                 }
             }
             final boolean flag2 = packetplayinsetcreativeslot.slotNum() >= 1 && packetplayinsetcreativeslot.slotNum() <= 45;
-            boolean flag3 = itemstack.isEmpty() || (itemstack.getDamageValue() >= 0 && itemstack.getCount() <= 64 && !itemstack.isEmpty());
+            boolean flag3 = itemstack.isEmpty() || itemstack.getCount() <= itemstack.getMaxStackSize();
             if (flag || (flag2 && !ItemStack.matches(this.player.inventoryMenu.getSlot(packetplayinsetcreativeslot.slotNum()).getItem(), packetplayinsetcreativeslot.itemStack()))) {
                 final InventoryView inventory = ((ContainerBridge) this.player.inventoryMenu).bridge$getBukkitView();
                 final org.bukkit.inventory.ItemStack item = CraftItemStack.asBukkitCopy(packetplayinsetcreativeslot.itemStack());
@@ -1744,5 +1749,30 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
 
     public SocketAddress getRawAddress() {
         return this.connection.channel.remoteAddress();
+    }
+
+    @Override
+    public void arclight$platform$setLastPosX(double d) {
+        lastPosX = d;
+    }
+
+    @Override
+    public void arclight$platform$setLastPosY(double d) {
+        lastPosY = d;
+    }
+
+    @Override
+    public void arclight$platform$setLastPosZ(double d) {
+        lastPosZ = d;
+    }
+
+    @Override
+    public void arclight$platform$setLastPitch(float f) {
+        lastPitch = f;
+    }
+
+    @Override
+    public void arclight$platform$setLastYaw(float f) {
+        lastYaw = f;
     }
 }

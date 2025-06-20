@@ -24,6 +24,12 @@ public class ArclightConstants {
      */
     public static final int ARCLIGHT_DIMENSION = 0xA2c11947;
 
+    public static final int PACKET_RECORDER_PERIOD_SEC = 5*60;
+
+    public static final int MAX_C2S_CUSTOM_PAYLOAD_SIZE = 32767; //TODO: Change with update
+
+    public static final int ANVIL_DEFAULT_DENIED_COST = -1;
+
     public static int currentTick;
 
 }

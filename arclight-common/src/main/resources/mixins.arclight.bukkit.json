@@ -10,9 +10,11 @@
   },
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ActionMixin",
     "AsyncStructureSpawnEventMixin",
     "ColouredConsoleSenderMixin",
     "CraftAbstractVillagerMixin",
+    "CraftAnvilViewMixin",
     "CraftBlockMixin",
     "CraftBlockStateMixin",
     "CraftConsoleCommandSenderMixin",

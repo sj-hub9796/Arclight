@@ -19,6 +19,7 @@
     "bukkit.CraftServerMixin_Forge",
     "bukkit.CraftWorldMixin_Forge",
     "bukkit.MaterialMixin_Forge",
+    "bukkit.StandardMessengerMixin_Forge",
     "core.command.CommandsMixin_Forge",
     "core.fluid.LavaFluidMixin_Forge",
     "core.network.ServerCommonPacketListenerImplMixin_Forge",
@@ -43,7 +44,6 @@
     "core.world.entity.animal.frog.TadpoleMixin_Forge",
     "core.world.entity.item.ItemEntityMixin_Forge",
     "core.world.entity.monster.ZombieMixin_Forge",
-    "core.world.entity.monster.piglin.PiglinAiMixin_Forge",
     "core.world.entity.monster.piglin.PiglinMixin_Forge",
     "core.world.entity.player.PlayerMixin_Forge",
     "core.world.entity.player.ServerPlayerMixin_Forge",
@@ -68,14 +68,13 @@
     "core.world.level.block.entity.AbstractFurnaceBlockEntityMixin_Forge",
     "core.world.level.block.entity.HopperBlockEntityMixin_Forge",
     "core.world.level.block.state.BlockBehaviourMixin_Forge",
-    "core.world.level.levelgen.structure.templatesystem.StructureTemplateMixin_Forge",
     "core.world.level.storage.loot.LootContextMixin_Forge",
     "forge.ForgeEventFactoryMixin",
     "forge.ForgeHooksMixin",
     "forge.IForgeServerPlayerMixin",
+    "forge.NetworkRegistryAccessor",
     "forge.PacketDistributorMixin",
     "forge.PermissionAPIMixin",
-    "forge.RegisterChannelsTaskMixin",
     "optimization.general.activationrange.entity.ItemEntityMixin_ActivationRange_Forge"
   ]
 }

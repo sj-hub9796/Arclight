@@ -1,11 +1,7 @@
-import io.izzel.arclight.gradle.tasks.RenameJarTask
-
 plugins {
     id 'architectury-plugin' version "${architect_plugin_version}"
     id 'com.gradleup.shadow' version "${shadow_plugin_version}"
 }
-
-apply plugin: io.izzel.arclight.gradle.ArclightGradlePlugin
 
 architectury {
     minecraft = minecraftVersion
@@ -23,14 +19,6 @@ loom {
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
         mixinConfig "mixins.arclight.forge.json"
     }
-}
-
-arclight {
-    mcVersion = minecraftVersion
-    forgeVersion = project.ext.forgeVersion
-    bukkitVersion = 'v1_21_R1'
-    accessTransformer = project(':arclight-common').file('bukkit.at')
-    extraMapping = project(':arclight-common').file('extra_mapping.tsrg')
 }
 
 configurations {
@@ -83,6 +71,7 @@ tasks.register('forgeMappings', Copy) {
     destinationDir = file("build/forge_mappings")
     from arclight.mappingsConfiguration.bukkitToForge
     from arclight.mappingsConfiguration.bukkitToForgeInheritance
+    from arclight.mappingsConfiguration.bukkitToNeoForge
 }
 
 project.sourceSets.main.output.dir file("build/forge_mappings"), builtBy: tasks.forgeMappings
@@ -109,12 +98,6 @@ remapJar {
     dependsOn shadowJar
 }
 
-tasks.register('reobfJar', RenameJarTask) {
-    inputJar.set remapJar.archiveFile
-    archiveClassifier.set 'reobf'
-    mappings = arclight.mappingsConfiguration.reobfBukkitPackage
-}
-
 tasks.register('srgJar', Jar) {
     from(tasks.shadowJar.outputs.files.collect { it.isDirectory() ? it : zipTree(it) }) {
         include 'io/izzel/**'
@@ -123,14 +106,6 @@ tasks.register('srgJar', Jar) {
     }
     archiveClassifier.set('srg')
     dependsOn shadowJar
-}
-
-tasks.register('spigotJar', RenameJarTask) {
-    inputJar.set tasks.srgJar.archiveFile
-    mappings = arclight.mappingsConfiguration.bukkitToForge
-    reverse = true
-    archiveClassifier.set('spigot')
-    dependsOn tasks.srgJar
 }
 
 sourcesJar {
