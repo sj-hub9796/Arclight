@@ -6,7 +6,7 @@ import org.bukkit.World;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
 
-public interface CraftServerBridge {
+public interface CraftServerBridge extends ServerBridge {
 
     void bridge$setPlayerList(PlayerList playerList);
 

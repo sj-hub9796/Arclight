@@ -181,6 +181,13 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         this.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.RELOAD));
     }
 
+    // Paper start - expose game version
+    @Override
+    public String getMinecraftVersion() {
+        return console.getServerVersion();
+    }
+    // Paper end
+
     private final Map<String, ChunkGenerator> generatorCache = new HashMap<>();
     private final Map<String, BiomeProvider> biomeProviderCache = new HashMap<>();
     private final Map<String, World.Environment> environmentCache = new HashMap<>();

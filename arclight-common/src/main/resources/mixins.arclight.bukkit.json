@@ -11,6 +11,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ActionMixin",
+    "BukkitMixin",
     "ColouredConsoleSenderMixin",
     "CraftAbstractVillagerMixin",
     "CraftAnvilViewMixin",
@@ -42,6 +43,7 @@
     "MaterialMixin",
     "PotionTypeMixin",
     "Registry_SimpleRegistryMixin",
+    "ServerMixin",
     "StandardMessengerMixin",
     "WatchdogThreadMixin",
     "event.AsyncStructureSpawnEventMixin",
