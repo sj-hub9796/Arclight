@@ -1,11 +1,14 @@
-package io.izzel.arclight.common.mixin.bukkit;
+package io.izzel.arclight.common.mixin.bukkit.event;
 
 import com.google.common.base.Function;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.util.DamageSourceBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
+import io.izzel.arclight.common.mod.server.event.ArclightEventFactory;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DistValidate;
+import io.izzel.arclight.mixin.Decorate;
+import io.izzel.arclight.mixin.DecorationOps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -28,6 +31,8 @@ import org.bukkit.craftbukkit.v.damage.CraftDamageSource;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockGrowEvent;
@@ -40,6 +45,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerSignOpenEvent;
+import org.bukkit.plugin.PluginManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -83,6 +89,14 @@ public abstract class CraftEventFactoryMixin {
         CraftDamageSource bukkitDamageSource = new CraftDamageSource(source);
         EntityDamageEvent event = callEntityDamageEvent(((DamageSourceBridge) source).bridge$getCausingEntity(), entity, EntityDamageEvent.DamageCause.CUSTOM, bukkitDamageSource, modifiers, modifierFunctions, cancelled);
         cir.setReturnValue(event);
+    }
+
+    @Decorate(method = "callPlayerInteractEvent*", at = @At(value = "INVOKE", target = "Lorg/bukkit/plugin/PluginManager;callEvent(Lorg/bukkit/event/Event;)V"))
+    private static void arclight$cancelPlayerInteractIfNecessary(PluginManager instance, Event event) throws Throwable {
+        if (ArclightCaptures.shouldCancelPlayerInteract()) {
+            ((Cancellable) event).setCancelled(true);
+        }
+        DecorationOps.callsite().invoke(instance, event);
     }
 
     /**
@@ -135,24 +149,20 @@ public abstract class CraftEventFactoryMixin {
     }
 
     /**
-     * @author IzzelAliz
-     * @reason
+     * @author IzzelAliz, InitAuther97
+     * @reason IzzelAliz: suppress during world generation; InitAuther97: use extracted logic
      */
     @Overwrite
     public static boolean handleBlockFormEvent(Level world, BlockPos pos, net.minecraft.world.level.block.state.BlockState block, int flag, @Nullable Entity entity) {
-        // Suppress during worldgen
-        if (!DistValidate.isValid(world)) {
+        // Suppressed in callBlockFormEvent
+        final var event = ArclightEventFactory.callBlockFormEvent(world, pos, block, flag, entity);
+        if (event == null) {
             world.setBlock(pos, block, flag);
             return true;
         }
-        CraftBlockState blockState = CraftBlockStates.getBlockState(world, pos, flag);
-        blockState.setData(block);
-
-        BlockFormEvent event = (entity == null) ? new BlockFormEvent(blockState.getBlock(), blockState) : new EntityBlockFormEvent(entity.bridge$getBukkitEntity(), blockState.getBlock(), blockState);
-        Bukkit.getPluginManager().callEvent(event);
 
         if (!event.isCancelled()) {
-            blockState.update(true);
+            event.getNewState().update(true);
         }
 
         return !event.isCancelled();

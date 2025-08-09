@@ -12,8 +12,6 @@ import io.izzel.arclight.mixin.DecorationOps;
 import io.izzel.arclight.mixin.Local;
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
@@ -27,12 +25,12 @@ import net.neoforged.neoforge.network.registration.PayloadRegistration;
 import org.bukkit.Bukkit;
 import org.objectweb.asm.Opcodes;
 import org.slf4j.Logger;
+import org.slf4j.helpers.NOPLogger;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 import java.util.Set;
@@ -51,19 +49,20 @@ public abstract class NetworkRegistryMixin {
         );
     }
 
-    @Inject(method = "getCodec", cancellable = true, at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;)V"))
-    private static void arclight$discardIllegal(ResourceLocation id, ConnectionProtocol protocol, PacketFlow flow, CallbackInfoReturnable<StreamCodec<? super FriendlyByteBuf, ? extends CustomPacketPayload>> cir) {
-        if (flow == PacketFlow.CLIENTBOUND) {
-            cir.setReturnValue(RawPayload.discardedCodec(id, ArclightConstants.MAX_C2S_CUSTOM_PAYLOAD_SIZE));
-        }
-    }
+    @Decorate(method = "getCodec", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;)V"))
+    private static void arclight$discardIllegal(Logger instance, String s, Object o, ResourceLocation id, ConnectionProtocol protocol, PacketFlow flow) throws Throwable {
+        // We always need to invoke warn() as there may be other implementation modifying return value / logic here.
+        // But make sure we don't log loud warnings since they are always recorded quietly.
+        // Designed to make it compatible with Oritech / Forgified Fabric API, </3 NeoForge
+        DecorationOps.callsite().invoke((Logger) NOPLogger.NOP_LOGGER, s, o);
 
-    @Redirect(method = "getCodec", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;)V"))
-    private static void arclight$recordUnknown(Logger instance, String s, Object o) {
-        if (o instanceof ResourceLocation id) {
-            PacketRecorder recorder = ((MessengerBridge) Bukkit.getMessenger()).arclight$getPacketRecorder();
-            recorder.recordUnknown(id);
-            recorder.update();
+        // If the method is still not cancelled, then we'll handle the mess.
+        PacketRecorder recorder = ((MessengerBridge) Bukkit.getMessenger()).arclight$getPacketRecorder();
+        recorder.recordUnknown(id);
+        recorder.update();
+        if (flow == PacketFlow.CLIENTBOUND) {
+            DecorationOps.cancel().invoke(RawPayload.discardedCodec(id, ArclightConstants.MAX_C2S_CUSTOM_PAYLOAD_SIZE));
+            return;
         }
     }
 

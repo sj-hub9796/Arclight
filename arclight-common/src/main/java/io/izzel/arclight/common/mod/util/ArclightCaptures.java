@@ -270,6 +270,20 @@ public class ArclightCaptures {
         }
     }
 
+    private static Stack<ArclightDamageContainer> damageContainers = new Stack<>();
+
+    public static void captureDamageContainer(ArclightDamageContainer container) {
+        damageContainers.push(container);
+    }
+
+    public static ArclightDamageContainer getDamageContainer() {
+        return damageContainers.peek();
+    }
+
+    public static void popDamageContainer() {
+        damageContainers.pop();
+    }
+
     private static transient WorldLoader.DataLoadContext dataLoadContext;
 
     public static void captureDataLoadContext(WorldLoader.DataLoadContext context) {
@@ -360,6 +374,18 @@ public class ArclightCaptures {
 
     public static void resetSpreadSource() {
         spreadPos = null;
+    }
+
+    private static boolean playerInteractCancelled;
+
+    public static void cancelPlayerInteract() { playerInteractCancelled = true; }
+
+    public static boolean shouldCancelPlayerInteract() {
+        try {
+            return playerInteractCancelled;
+        } finally {
+            playerInteractCancelled = false;
+        }
     }
 
     private static void recapture(String type) {

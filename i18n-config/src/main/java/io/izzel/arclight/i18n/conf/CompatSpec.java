@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @ConfigSerializable
-public class CompatSpec {
+public class  CompatSpec {
 
     @Setting("material-property-overrides")
     private Map<String, MaterialPropertySpec> materials;
@@ -29,8 +29,11 @@ public class CompatSpec {
     @Setting("valid-username-regex")
     private String validUsernameRegex;
 
-    @Setting("exact-plugin-entity-damage-control")
-    private boolean exactPluginEntityDamageControl;
+    @Setting("isolate-plugin-class-loaders")
+    private List<String> isolatePluginClassLoaders;
+
+    @Setting("isolate-adventure-from-modloader")
+    private boolean isolateAdventureFromModloader;
 
     public Map<String, MaterialPropertySpec> getMaterials() {
         return materials;
@@ -68,7 +71,16 @@ public class CompatSpec {
         return validUsernameRegex;
     }
 
-    public boolean isExactPluginEntityDamageControl() {
-        return exactPluginEntityDamageControl;
+    public boolean isIsolatedPluginClassLoaders(String name) {
+        for (String prefix : isolatePluginClassLoaders) {
+            if (name.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isAdventureIsolatedFromML() {
+        return isolateAdventureFromModloader;
     }
 }

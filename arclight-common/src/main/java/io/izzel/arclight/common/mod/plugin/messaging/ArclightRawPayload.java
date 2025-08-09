@@ -27,12 +27,7 @@ public class ArclightRawPayload implements RawPayload {
     }
 
     public ArclightRawPayload(CustomPacketPayload.Type<ArclightRawPayload> type, byte[] raw) {
-        this(type, Unpooled.copiedBuffer(raw));
-    }
-
-    public ArclightRawPayload(CustomPacketPayload.Type<ArclightRawPayload> type) {
-        Objects.requireNonNull(type, "type cannot be null");
-        this.type = type;
+        this(type, Unpooled.wrappedBuffer(raw));
     }
 
     @Override
@@ -41,7 +36,7 @@ public class ArclightRawPayload implements RawPayload {
     }
 
     @Override
-    public ByteBuf arclight$getData() {
+    public ByteBuf arclight$getRawData() {
         return data;
     }
 
