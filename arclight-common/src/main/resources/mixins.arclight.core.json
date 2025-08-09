@@ -30,6 +30,7 @@
     "fluid.LavaFluidMixin",
     "nbt.CompoundTagMixin",
     "network.ConnectionMixin",
+    "network.ServerboundInteractPacketMixin",
     "network.ServerCommonPacketListenerImplMixin",
     "network.ServerConfigurationPacketListenerImplMixin",
     "network.ServerGamePacketListenerImpl_HandlerMixin",

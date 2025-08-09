@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mixin.core.network;
 
 import com.mojang.brigadier.ParseResults;
+import io.izzel.arclight.common.bridge.bukkit.CraftEventFactoryBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.ContainerBridge;
@@ -1212,6 +1213,34 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
         final Entity entity = packet.getTarget(world);
         if (entity == player && !player.isSpectator()) {
             bridge$disconnect("Cannot interact with self!");
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "handleInteract", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/server/level/ServerPlayer;setShiftKeyDown(Z)V"))
+    private void arclight$playerUseUnknownEntityEvent(ServerboundInteractPacket packet, CallbackInfo ci) {
+        final ServerLevel world = this.player.serverLevel();
+        final Entity entity = packet.getTarget(world);
+
+        if (entity == null) {
+            packet.dispatch(new ServerboundInteractPacket.Handler() {
+
+                @Override
+                public void onInteraction(InteractionHand interactionHand) {
+                    ((CraftEventFactoryBridge) new CraftEventFactory()).arclight$callPlayerUseUnknownEntityEvent(player, packet, interactionHand, null);
+                }
+
+                @Override
+                public void onInteraction(InteractionHand interactionHand, Vec3 vec3) {
+                    ((CraftEventFactoryBridge) new CraftEventFactory()).arclight$callPlayerUseUnknownEntityEvent(player, packet, interactionHand, vec3);
+                }
+
+                @Override
+                public void onAttack() {
+                    ((CraftEventFactoryBridge) new CraftEventFactory()).arclight$callPlayerUseUnknownEntityEvent(player, packet, InteractionHand.MAIN_HAND, null);
+                }
+
+            });
             ci.cancel();
         }
     }

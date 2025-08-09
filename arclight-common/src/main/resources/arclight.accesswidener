@@ -115,6 +115,8 @@ accessible field net/minecraft/network/protocol/game/ServerboundMovePlayerPacket
 accessible field net/minecraft/network/protocol/game/ServerboundMovePlayerPacket hasRot Z
 accessible field net/minecraft/network/protocol/game/ServerboundMovePlayerPacket z D
 accessible field net/minecraft/network/protocol/game/ServerboundMovePlayerPacket hasPos Z
+accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$Action
+accessible class net/minecraft/network/protocol/game/ServerboundInteractPacket$ActionType
 accessible class net/minecraft/server/commands/TeleportCommand$LookAt
 accessible field net/minecraft/world/entity/ItemBasedSteering boostTime I
 accessible field net/minecraft/world/entity/ItemBasedSteering boosting Z

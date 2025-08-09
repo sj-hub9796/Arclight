@@ -1,15 +1,20 @@
 package io.izzel.arclight.common.mixin.bukkit.event;
 
+import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent;
 import com.google.common.base.Function;
+import io.izzel.arclight.common.bridge.bukkit.CraftEventFactoryBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import io.izzel.arclight.common.bridge.core.network.ServerboundInteractPacketBridge;
 import io.izzel.arclight.common.bridge.core.util.DamageSourceBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
+import io.izzel.arclight.common.mod.mixins.annotation.TransformAccess;
 import io.izzel.arclight.common.mod.server.event.ArclightEventFactory;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DistValidate;
 import io.izzel.arclight.mixin.Decorate;
 import io.izzel.arclight.mixin.DecorationOps;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -22,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.Side;
+import org.bukkit.craftbukkit.v.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.craftbukkit.v.block.CraftBlockState;
 import org.bukkit.craftbukkit.v.block.CraftBlockStates;
@@ -29,6 +35,7 @@ import org.bukkit.craftbukkit.v.block.CraftSign;
 import org.bukkit.craftbukkit.v.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v.damage.CraftDamageSource;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v.util.CraftVector;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -46,6 +53,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerSignOpenEvent;
 import org.bukkit.plugin.PluginManager;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -58,7 +66,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 @Mixin(value = CraftEventFactory.class, remap = false)
-public abstract class CraftEventFactoryMixin {
+public abstract class CraftEventFactoryMixin implements CraftEventFactoryBridge {
 
     // @formatter:off
     @Shadow private static EntityDamageEvent callEntityDamageEvent(Entity damager, Entity damagee, EntityDamageEvent.DamageCause cause, org.bukkit.damage.DamageSource bukkitDamageSource, Map<EntityDamageEvent.DamageModifier, Double> modifiers, Map<EntityDamageEvent.DamageModifier, Function<? super Double, Double>> modifierFunctions, boolean cancelled) { return null; }
@@ -282,4 +290,25 @@ public abstract class CraftEventFactoryMixin {
         Bukkit.getPluginManager().callEvent(event);
         return !event.isCancelled();
     }
+
+    // Paper start - PlayerUseUnknownEntityEvent
+    @Override
+    public void arclight$callPlayerUseUnknownEntityEvent(net.minecraft.world.entity.player.Player player, net.minecraft.network.protocol.game.ServerboundInteractPacket packet, InteractionHand hand, @Nullable net.minecraft.world.phys.Vec3 vector) {
+        callPlayerUseUnknownEntityEvent(player, packet, hand, vector);
+    }
+
+    @TransformAccess(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)
+    private static void callPlayerUseUnknownEntityEvent(net.minecraft.world.entity.player.Player player, net.minecraft.network.protocol.game.ServerboundInteractPacket packet, InteractionHand hand, @Nullable net.minecraft.world.phys.Vec3 vector) {
+        ServerboundInteractPacketBridge bridge = (ServerboundInteractPacketBridge) packet;
+        Player bukkitPlayer = ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity();
+        PlayerUseUnknownEntityEvent event = new PlayerUseUnknownEntityEvent(
+                bukkitPlayer,
+                bridge.getEntityId(),
+                bridge.isAttack(),
+                CraftEquipmentSlot.getHand(hand),
+                vector != null ? CraftVector.toBukkit(vector) : null
+        );
+        Bukkit.getPluginManager().callEvent(event);
+    }
+    // Paper end - PlayerUseUnknownEntityEvent
 }
